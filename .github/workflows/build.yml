@@ -1,0 +1,97 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Build with Maven
+      run: mvn clean package
+      
+    - name: Create Release Assets
+      run: |
+        mkdir -p release-assets
+        cp target/study-planner-*.jar release-assets/
+        
+        # Create platform-specific launchers
+        echo '#!/bin/bash' > release-assets/run.sh
+        echo 'java -jar study-planner-*.jar' >> release-assets/run.sh
+        chmod +x release-assets/run.sh
+        
+        echo '@echo off' > release-assets/run.bat
+        echo 'java -jar study-planner-*.jar' >> release-assets/run.bat
+        
+        # Create README for releases
+        cat > release-assets/README.txt << 'EOF'
+        AI Study Planner - Release Package
+        
+        This package contains the compiled JavaFX application.
+        
+        Prerequisites:
+        - Java 17 or higher installed on your system
+        
+        To run:
+        - Windows: Double-click run.bat or run: java -jar study-planner-*.jar
+        - Linux/Mac: ./run.sh or run: java -jar study-planner-*.jar
+        
+        For more information, visit: https://github.com/Vinothvinay/study-planner
+        EOF
+        
+    - name: Upload Release Assets
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-package
+        path: release-assets/
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: release-assets/*
+        body: |
+          ## 🎓 AI Study Planner v${{ github.ref_name }}
+          
+          ### What's New
+          - JavaFX desktop application for intelligent study planning
+          - AI-powered timetable generation
+          - Interactive calendar with drag-and-drop
+          - Progress tracking and theme support
+          
+          ### Installation
+          1. Ensure you have Java 17+ installed
+          2. Download the appropriate files for your platform
+          3. Run the application using the provided scripts
+          
+          ### Features
+          - 🤖 AI-Powered Planning with Hugging Face integration
+          - 📅 Interactive Calendar Interface
+          - 📊 Progress Tracking
+          - 🎨 Light/Dark Theme Support
+          - 📱 Modern JavaFX UI
+          
+          ### Support
+          For issues and questions, please visit: https://github.com/Vinothvinay/study-planner/issues
+        draft: false
+        prerelease: false

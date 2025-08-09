@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Planner - Web Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .demo-tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .demo-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .demo-content {
+            display: none;
+        }
+        
+        .demo-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .subjects-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .subject-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .subject-info h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .subject-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .day-column {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 200px;
+        }
+        
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .task-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #28a745;
+            cursor: move;
+            font-size: 14px;
+        }
+        
+        .task-item.done {
+            opacity: 0.6;
+            border-left-color: #6c757d;
+        }
+        
+        .progress-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .progress-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(#28a745 0deg, #28a745 0deg, #e9ecef 0deg);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .progress-circle::before {
+            content: '';
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .progress-text {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .note h4 {
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .timetable-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-tabs {
+                flex-direction: column;
+            }
+            
+            .demo-tab {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 AI Study Planner - Web Demo</h1>
+            <p>Interactive demonstration of the desktop application features</p>
+        </div>
+        
+        <div class="demo-container">
+            <div class="demo-tabs">
+                <button class="demo-tab active" onclick="showTab('subjects')">Subjects</button>
+                <button class="demo-tab" onclick="showTab('timetable')">Timetable</button>
+                <button class="demo-tab" onclick="showTab('progress')">Progress</button>
+                <button class="demo-tab" onclick="showTab('ai-demo')">AI Demo</button>
+            </div>
+            
+            <!-- Subjects Tab -->
+            <div id="subjects" class="demo-content active">
+                <h2>Manage Subjects</h2>
+                <p>Add subjects with difficulty levels and target study hours.</p>
+                
+                <form id="subjectForm">
+                    <div class="form-group">
+                        <label for="subjectName">Subject Name</label>
+                        <input type="text" id="subjectName" placeholder="e.g., Mathematics" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="difficulty">Difficulty Level (1-5)</label>
+                        <select id="difficulty" required>
+                            <option value="1">1 - Very Easy</option>
+                            <option value="2">2 - Easy</option>
+                            <option value="3" selected>3 - Medium</option>
+                            <option value="4">4 - Hard</option>
+                            <option value="5">5 - Very Hard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetHours">Target Study Hours</label>
+                        <input type="number" id="targetHours" min="1" max="200" step="0.5" value="20" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="examDate">Exam Date</label>
+                        <input type="date" id="examDate" required>
+                    </div>
+                    
+                    <button type="submit" class="btn">Add Subject</button>
+                </form>
+                
+                <div class="subjects-list" id="subjectsList">
+                    <h3>Current Subjects</h3>
+                    <p>No subjects added yet. Add your first subject above!</p>
+                </div>
+            </div>
+            
+            <!-- Timetable Tab -->
+            <div id="timetable" class="demo-content">
+                <h2>Weekly Timetable</h2>
+                <p>Drag and drop tasks between days. This is a simplified demo of the drag-and-drop functionality.</p>
+                
+                <div class="timetable-grid" id="timetableGrid">
+                    <div class="day-column">
+                        <div class="day-header">Monday</div>
+                        <div class="task-item" draggable="true">Math - Calculus (2h)</div>
+                        <div class="task-item" draggable="true">Physics - Mechanics (1.5h)</div>
+                    </div>
+                    <div class="day-column">
+                        <div class="day-header">Tuesday</div>
+                        <div class="task-item" draggable="true">Chemistry - Organic (2h)</div>
+                    </div>
+                    <div class="day-column">
+                        <div class="day-header">Wednesday</div>
+                        <div class="task-item" draggable="true">Biology - Cell Biology (1h)</div>
+                    </div>
+                    <div class="day-column">
+                        <div class="day-header">Thursday</div>
+                        <div class="task-item" draggable="true">English - Literature (1h)</div>
+                    </div>
+                    <div class="day-column">
+                        <div class="day-header">Friday</div>
+                        <div class="task-item" draggable="true">History - World War II (1.5h)</div>
+                    </div>
+                    <div class="day-column">
+                        <div class="day-header">Saturday</div>
+                        <div class="task-item" draggable="true">Review Week (2h)</div>
+                    </div>
+                    <div class="day-column">
+                        <div class="day-header">Sunday</div>
+                        <div class="task-item" draggable="true">Rest Day</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Tab -->
+            <div id="progress" class="demo-content">
+                <h2>Study Progress</h2>
+                <p>Track your completion rate and study statistics.</p>
+                
+                <div class="progress-section">
+                    <div class="progress-circle" id="progressCircle">
+                        <div class="progress-text" id="progressText">75%</div>
+                    </div>
+                    <h3>Overall Completion</h3>
+                    <p>You're making great progress! Keep up the good work.</p>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn" onclick="updateProgress()">Update Progress</button>
+                    <button class="btn secondary" onclick="resetProgress()">Reset Progress</button>
+                </div>
+            </div>
+            
+            <!-- AI Demo Tab -->
+            <div id="ai-demo" class="demo-content">
+                <h2>AI Timetable Generation</h2>
+                <p>Experience how the AI generates personalized study schedules.</p>
+                
+                <div class="note">
+                    <h4>⚠️ Demo Mode</h4>
+                    <p>This is a simulation of the AI generation process. In the actual desktop application, 
+                    this would connect to Hugging Face AI models to create real study plans.</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dailyHours">Daily Study Hours</label>
+                    <input type="number" id="dailyHours" min="1" max="16" step="0.5" value="3" required>
+                </div>
+                
+                <button class="btn" onclick="generateAIDemo()">Generate AI Timetable</button>
+                
+                <div id="aiResult" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+        
+        <div class="demo-container">
+            <h2>About This Demo</h2>
+            <p>
+                This web demo showcases the key features of the AI Study Planner desktop application. 
+                While this simplified version runs in your browser, the full application is a powerful 
+                JavaFX desktop app with advanced AI integration, drag-and-drop functionality, and 
+                comprehensive study planning tools.
+            </p>
+            
+            <h3>Key Differences from Desktop App:</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Full AI Integration:</strong> Real Hugging Face API calls for intelligent planning</li>
+                <li><strong>Advanced Drag & Drop:</strong> Complete cross-day task management</li>
+                <li><strong>Data Persistence:</strong> Save and load study plans</li>
+                <li><strong>Export Features:</strong> Generate PDF reports and schedules</li>
+                <li><strong>Theme Switching:</strong> Light/dark mode with smooth transitions</li>
+            </ul>
+            
+            <p style="margin-top: 20px;">
+                <strong>Download the full desktop application</strong> from the 
+                <a href="https://github.com/Vinothvinay/study-planner/releases" style="color: #667eea;">GitHub releases page</a> 
+                to experience all features!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let subjects = [];
+        let progress = 75;
+        
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.demo-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.demo-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Subject management
+        document.getElementById('subjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const subject = {
+                name: document.getElementById('subjectName').value,
+                difficulty: document.getElementById('difficulty').value,
+                targetHours: document.getElementById('targetHours').value,
+                examDate: document.getElementById('examDate').value
+            };
+            
+            subjects.push(subject);
+            updateSubjectsList();
+            document.getElementById('subjectForm').reset();
+        });
+        
+        function updateSubjectsList() {
+            const container = document.getElementById('subjectsList');
+            
+            if (subjects.length === 0) {
+                container.innerHTML = '<h3>Current Subjects</h3><p>No subjects added yet. Add your first subject above!</p>';
+                return;
+            }
+            
+            let html = '<h3>Current Subjects</h3>';
+            subjects.forEach((subject, index) => {
+                html += `
+                    <div class="subject-item">
+                        <div class="subject-info">
+                            <h4>${subject.name}</h4>
+                            <p>Difficulty: ${subject.difficulty}/5 | Target: ${subject.targetHours}h | Exam: ${subject.examDate}</p>
+                        </div>
+                        <button class="remove-btn" onclick="removeSubject(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function removeSubject(index) {
+            subjects.splice(index, 1);
+            updateSubjectsList();
+        }
+        
+        // Progress management
+        function updateProgress() {
+            progress = Math.floor(Math.random() * 100);
+            updateProgressDisplay();
+        }
+        
+        function resetProgress() {
+            progress = 0;
+            updateProgressDisplay();
+        }
+        
+        function updateProgressDisplay() {
+            const circle = document.getElementById('progressCircle');
+            const text = document.getElementById('progressText');
+            
+            circle.style.background = `conic-gradient(#28a745 0deg, #28a745 ${progress * 3.6}deg, #e9ecef ${progress * 3.6}deg)`;
+            text.textContent = `${progress}%`;
+        }
+        
+        // AI Demo
+        function generateAIDemo() {
+            const dailyHours = document.getElementById('dailyHours').value;
+            const resultDiv = document.getElementById('aiResult');
+            
+            resultDiv.innerHTML = '<div style="text-align: center; padding: 20px;"><div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div><p>AI is thinking...</p></div>';
+            
+            setTimeout(() => {
+                const subjects = ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'History'];
+                const tasks = [];
+                
+                for (let i = 0; i < 7; i++) {
+                    const dayTasks = [];
+                    let remainingHours = parseFloat(dailyHours);
+                    
+                    while (remainingHours > 0) {
+                        const subject = subjects[Math.floor(Math.random() * subjects.length)];
+                        const hours = Math.min(remainingHours, Math.random() * 2 + 0.5);
+                        dayTasks.push(`${subject} (${hours.toFixed(1)}h)`);
+                        remainingHours -= hours;
+                    }
+                    
+                    tasks.push(dayTasks);
+                }
+                
+                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                let html = '<h3>AI Generated Timetable</h3><div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">';
+                
+                days.forEach((day, index) => {
+                    html += `<h4>${day}</h4><ul>`;
+                    tasks[index].forEach(task => {
+                        html += `<li>${task}</li>`;
+                    });
+                    html += '</ul>';
+                });
+                
+                html += '</div>';
+                resultDiv.innerHTML = html;
+            }, 2000);
+        }
+        
+        // Drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const taskItems = document.querySelectorAll('.task-item');
+            const dayColumns = document.querySelectorAll('.day-column');
+            
+            taskItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+            });
+            
+            dayColumns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+            });
+        });
+        
+        function handleDragStart(e) {
+            e.target.style.opacity = '0.4';
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('text/html');
+            const targetColumn = e.currentTarget;
+            
+            if (targetColumn.querySelector('.day-header')) {
+                targetColumn.insertAdjacentHTML('beforeend', data);
+                
+                // Remove the original item
+                const originalItem = document.querySelector('.task-item[draggable="true"]');
+                if (originalItem && originalItem !== targetColumn.querySelector('.task-item:last-child')) {
+                    originalItem.remove();
+                }
+            }
+        }
+        
+        // Add some CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize with some sample data
+        document.getElementById('examDate').value = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    </script>
+</body>
+</html>

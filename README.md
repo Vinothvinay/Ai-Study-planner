@@ -1,144 +1,173 @@
-# Study Planner - JavaFX Application
+# 🎓 AI Study Planner
 
-A modern, responsive study planner built with JavaFX featuring dark/light theme switching and smooth animations.
+[![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://openjdk.java.net/)
+[![JavaFX](https://img.shields.io/badge/JavaFX-17.0.2-blue.svg)](https://openjfx.io/)
+[![Maven](https://img.shields.io/badge/Maven-3.6+-red.svg)](https://maven.apache.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Prerequisites
+> **Live Demo & Documentation: [https://Vinothvinay.github.io/study-planner](https://Vinothvinay.github.io/study-planner)**
 
-Before running this application, you need to install:
+A sophisticated desktop application built with JavaFX that helps students create intelligent study schedules using AI integration. The application generates personalized study plans based on subjects, difficulty levels, and available study time.
 
-### 1. Java 17 or Higher
-- Download from: [Eclipse Temurin](https://adoptium.net/)
-- Or use: [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
-- Make sure `java` and `javac` are in your PATH
+## ✨ Features
 
-### 2. Maven 3.6+
-- Download from: [Maven Official Site](https://maven.apache.org/download.cgi)
-- Or use package managers:
-  - **Windows**: `choco install maven` (with Chocolatey)
-  - **macOS**: `brew install maven` (with Homebrew)
-  - **Ubuntu/Debian**: `sudo apt install maven`
+- 🤖 **AI-Powered Planning**: Intelligent timetable generation using Hugging Face AI models
+- 📅 **Interactive Calendar**: Visual calendar interface with drag-and-drop functionality
+- 📊 **Progress Tracking**: Real-time progress monitoring with pie charts and completion status
+- 🎨 **Theme Support**: Light and dark theme toggle for comfortable viewing
+- 📱 **Modern UI**: Responsive JavaFX interface with smooth animations
+- 📤 **Export Functionality**: Export study plans and progress reports
 
-## Quick Start
+## 🚀 Live Demo
 
-### Option 1: Using the Run Scripts (Recommended)
+- **🌐 GitHub Pages**: [https://Vinothvinay.github.io/study-planner](https://Vinothvinay.github.io/study-planner)
+- **📱 Documentation**: Complete project documentation and screenshots
+- **⬇️ Downloads**: Latest releases for all platforms
 
-#### Windows
+## 🛠️ Technology Stack
+
+- **Backend**: Java 17, Maven
+- **Frontend**: JavaFX 17.0.2
+- **AI Integration**: Hugging Face API
+- **Styling**: Custom CSS with theme support
+- **Build**: Maven with shade plugin for executable JARs
+
+## 📋 Prerequisites
+
+- Java 17 or higher
+- Maven 3.6+
+- Hugging Face API token (for AI features)
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 ```bash
-run.bat
+git clone https://github.com/Vinothvinay/study-planner.git
+cd study-planner
 ```
 
-#### Linux/macOS
+### 2. Set Environment Variables
 ```bash
-chmod +x run.sh
+# Set your Hugging Face API token
+export HF_TOKEN=your_token_here
+
+# On Windows (Command Prompt)
+set HF_TOKEN=your_token_here
+
+# On Windows (PowerShell)
+$env:HF_TOKEN="your_token_here"
+```
+
+### 3. Build the Project
+```bash
+mvn clean package
+```
+
+### 4. Run the Application
+```bash
+# Using the generated JAR
+java -jar target/study-planner-1.0.0.jar
+
+# Using provided scripts
+# Windows
+run.bat
+
+# Linux/Mac
 ./run.sh
 ```
 
-### Option 2: Manual Maven Commands
+## 📦 Installation Options
 
-1. **Build the project:**
-   ```bash
-   mvn clean compile
-   ```
+### Option 1: Download Latest Release
+1. Go to [Releases](https://github.com/Vinothvinay/study-planner/releases)
+2. Download the latest release package for your platform
+3. Extract and run using the provided scripts
 
-2. **Run the application:**
-   ```bash
-   mvn javafx:run
-   ```
+### Option 2: Build from Source
+1. Follow the Quick Start guide above
+2. Customize the application as needed
+3. Build your own executable
 
-3. **Create a runnable JAR:**
-   ```bash
-   mvn clean package
-   java -jar target/study-planner-1.0.0.jar
-   ```
+## 🎯 Usage
 
-## Project Structure
+### Adding Subjects
+1. Click "Add Subject" in the left sidebar
+2. Enter subject name, difficulty (1-5), target hours, and exam date
+3. Click "Save" to add the subject
+
+### Generating AI Timetable
+1. Ensure you have subjects added
+2. Set your daily study hours using the spinner
+3. Click "Generate Timetable (AI)" button
+4. Wait for AI to generate your personalized schedule
+
+### Managing Tasks
+- **Drag & Drop**: Move tasks between different days
+- **Mark Complete**: Check the checkbox to mark tasks as done
+- **Progress Tracking**: View completion progress in the pie chart
+
+### Theme Switching
+- Toggle between light and dark themes using the "Dark Mode" button
+
+## 🔧 Configuration
+
+### Hugging Face API Setup
+1. Visit [Hugging Face](https://huggingface.co/settings/tokens)
+2. Create a new access token
+3. Set the token as an environment variable: `HF_TOKEN=your_token_here`
+
+### Customization
+- Modify CSS files in `src/main/resources/styles/` for custom themes
+- Adjust AI parameters in `AIService.java`
+- Customize the calendar layout in `DashboardView.java`
+
+## 📁 Project Structure
 
 ```
 study-planner/
 ├── src/
-│   └── com/studyplannerfx/
-│       ├── App.java              # Main application entry point
-│       ├── DashboardView.java    # Main dashboard UI
-│       ├── model/                # Data models
-│       ├── services/             # Business logic
-│       └── util/                 # Utility classes
-├── resources/
-│   └── styles/
-│       ├── base.css              # Base styles
-│       ├── light.css             # Light theme
-│       ├── dark.css              # Dark theme
-│       └── components.css        # Component styles
-├── pom.xml                       # Maven configuration
-├── run.bat                       # Windows run script
-├── run.sh                        # Unix run script
-└── README.md                     # This file
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/studyplannerfx/
+│   │   │       ├── App.java              # Main application entry point
+│   │   │       ├── DashboardView.java    # Main UI controller
+│   │   │       └── ...
+│   │   └── resources/
+│   │       └── styles/                   # CSS theme files
+│   └── test/                             # Test files
+├── docs/                                 # GitHub Pages documentation
+├── .github/workflows/                    # GitHub Actions
+├── pom.xml                              # Maven configuration
+└── README.md                            # This file
 ```
 
-## Features
+## 🤝 Contributing
 
-- ✨ Modern JavaFX UI with smooth animations
-- 🌓 Dark/Light theme switching
-- 📱 Responsive design
-- 🎯 Study planning and management
-- 💾 In-memory data storage (no database required)
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-## Troubleshooting
+## 📝 License
 
-### Common Issues
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. **"JavaFX runtime components are missing"**
-   - Make sure you're using Java 17+ and the Maven JavaFX plugin
-   - Run with `mvn javafx:run` instead of `java -jar`
+## 🙏 Acknowledgments
 
-2. **"Maven not found"**
-   - Install Maven and add it to your PATH
-   - Or use an IDE like IntelliJ IDEA or Eclipse
+- JavaFX team for the excellent UI framework
+- Hugging Face for AI model integration
+- Maven community for build tools
+- All contributors and users of this project
 
-3. **"Java version too old"**
-   - Update to Java 17 or higher
-   - Check with: `java -version`
+## 📞 Support
 
-4. **Build errors**
-   - Run `mvn clean` first
-   - Check that all dependencies are downloaded
+- **Issues**: [GitHub Issues](https://github.com/Vinothvinay/study-planner/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Vinothvinay/study-planner/discussions)
+- **Documentation**: [Live Demo](https://Vinothvinay.github.io/study-planner)
 
-### IDE Setup
+---
 
-#### IntelliJ IDEA
-1. Open the project folder
-2. Import as Maven project
-3. Run `App.java` directly
+⭐ **Star this repository if you find it helpful!**
 
-#### Eclipse
-1. Import as Maven project
-2. Run as Java Application on `App.java`
-
-#### VS Code
-1. Install Java Extension Pack
-2. Open the project folder
-3. Use Maven sidebar to run goals
-
-## Development
-
-### Adding New Features
-1. Create new classes in appropriate packages
-2. Update the UI in `DashboardView.java`
-3. Add any new CSS styles to the stylesheets
-
-### Building for Distribution
-```bash
-mvn clean package
-```
-This creates a runnable JAR in the `target/` folder.
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Support
-
-If you encounter any issues:
-1. Check the troubleshooting section above
-2. Ensure all prerequisites are installed
-3. Try running with the provided scripts
-4. Check that Java 17+ and Maven are properly configured 
+Made with ❤️ using JavaFX 
