@@ -1,0 +1,13 @@
+/* Light theme variables */
+.root {
+  -app-bg: #ffffff;
+  -bar-bg: #f7f7f8;
+  -panel-bg: #fbfbfc;
+  -line: #e5e7eb;
+  -primary: #16a34a;
+  -primary-fore: #ffffff;
+  -text: #0f172a;
+}
+.root { -fx-background-color: -app-bg; }
+.label { -fx-text-fill: -text; }
+.text { -fx-fill: -text; }

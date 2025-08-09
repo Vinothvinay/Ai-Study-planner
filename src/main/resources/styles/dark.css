@@ -1,0 +1,13 @@
+/* Dark theme variables */
+.root {
+  -app-bg: #0b0f14;
+  -bar-bg: #0f1720;
+  -panel-bg: #111827;
+  -line: #1f2937;
+  -primary: #22c55e;
+  -primary-fore: #0b0f14;
+  -text: #e5e7eb;
+}
+.root { -fx-background-color: -app-bg; }
+.label { -fx-text-fill: -text; }
+.text { -fx-fill: -text; }
